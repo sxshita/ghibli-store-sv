@@ -118,10 +118,8 @@ app.get('*', (req, res, next) => {
   res.status(404).send("Sorry can't find that!")
 })
 
-const PORT = 8080;
-
-httpServer.listen(PORT, () => {
-  logger.info(`🚀 Server started at http://localhost:${PORT}`);
+httpServer.listen($PORT, () => {
+  logger.info(`🚀 Server started at http://localhost:${$PORT}`);
 });
 
 
