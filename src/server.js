@@ -13,13 +13,18 @@ import checkAuth from "./middlewares/auth.middleware.js";
 import compression from "compression";
 import logger from "./loggers/Log4jsLogger.js";
 import loggerMiddleware from "./middlewares/routesLogger.middleware.js";
+import path from "path";
+import { fileURLToPath } from 'url';
   
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(express.json());
-app.use(express.static(path.join(__dirname + '../public')));
+app.use(express.static(path.join(__dirname + '/public')));
 app.use(session({
   store: MongoStore.create({ mongoUrl: "mongodb+srv://sasha:coder.sasha@cluster0.ezluz.mongodb.net/?retryWrites=true&w=majority" }),
   secret: 'sushi',
@@ -34,7 +39,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(loggerMiddleware);
 
-app.set('views',path.join(__dirname + '../public/views'));
+console.log(__dirname)
+app.set('views',path.join(__dirname + '/public/views'));
 app.set('view engine','hbs');
 
 app.engine(
