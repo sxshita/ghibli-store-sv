@@ -118,8 +118,8 @@ app.get('*', (req, res, next) => {
   res.status(404).send("Sorry can't find that!")
 })
 
-httpServer.listen($PORT, () => {
-  logger.info(`🚀 Server started at http://localhost:${$PORT}`);
+httpServer.listen(`0.0.0.0:$PORT`, () => {
+  logger.info(`🚀 Server started at http://localhost:${`0.0.0.0:$PORT`}`);
 });
 
 
