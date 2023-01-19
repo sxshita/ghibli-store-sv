@@ -19,7 +19,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname + '../public')));
 app.use(session({
   store: MongoStore.create({ mongoUrl: "mongodb+srv://sasha:coder.sasha@cluster0.ezluz.mongodb.net/?retryWrites=true&w=majority" }),
   secret: 'sushi',
@@ -34,7 +34,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(loggerMiddleware);
 
-app.set('views','../public/views');
+app.set('views',path.join(__dirname + '../public/views'));
 app.set('view engine','hbs');
 
 app.engine(
