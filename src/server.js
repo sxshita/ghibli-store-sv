@@ -120,7 +120,7 @@ app.get('*', (req, res, next) => {
 
 const PORT = process.env.PORT;
 
-httpServer.listen(`0.0.0.0:${PORT}`, () => {
+httpServer.listen(PORT, () => {
   logger.info(`🚀 Server started at http://localhost:${PORT}`);
 });
 
