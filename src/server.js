@@ -34,7 +34,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(loggerMiddleware);
 
-app.set('views','ghibli-store-sv/public/views');
+app.set('views','../public/views');
 app.set('view engine','hbs');
 
 app.engine(
