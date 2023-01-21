@@ -10,10 +10,7 @@ passport.use('register', new LocalStrategy (
         const user = await users.findUser(username);
         if (user) return done(null, false, {message: 'Ya existe un usuario con ese nombre'});
         // si no existe todavia, hashear password y pushear
-        const passwordHashed = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-        const userCreated = { username, password: passwordHashed };
-        await users.save(userCreated);
-        done(null, userCreated);
+        done(null, username);
     }
 ));
 

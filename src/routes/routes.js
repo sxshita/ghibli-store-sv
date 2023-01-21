@@ -4,6 +4,8 @@ import uploadProducts from "../util/faker/uploadProducts.js";
 import logger from "../loggers/Log4jsLogger.js";
 import os from 'node:os';
 import getRandoms from '../apiRandoms.js';
+import sendMail from '../util/nodemailer/nodemailer.js';
+import bcrypt from 'bcrypt';
 
 const getIndex = async (req, res) => {
     const {products} = await connectMongo();
@@ -32,7 +34,18 @@ const getRegisterFail = (_, res) => {
     res.render('register', {error: true});
 }
 
-const postRegister = async (_, res) => {
+const postRegister = async (req, res) => {
+    const { users } = connectMongo();
+    const passwordHashed = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
+    const userCreated = { 
+        username : req.body.username, 
+        password: passwordHashed, 
+        name: req.body.name, 
+        address : req.body.address, 
+        phone: req.body.phone 
+    };
+    await users.save(userCreated);
+    await sendMail();
     res.redirect('/login');
 }
 
