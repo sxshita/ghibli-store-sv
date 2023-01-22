@@ -10,7 +10,7 @@ passport.use('register', new LocalStrategy (
         const user = await users.findUser(username);
         if (user) return done(null, false, {message: 'Ya existe un usuario con ese nombre'});
         // si no existe todavia, hashear password y pushear
-        done(null, username);
+        done(null, { username });
     }
 ));
 
@@ -25,10 +25,11 @@ passport.use('auth', new LocalStrategy (
 ));
 
 passport.serializeUser((usuario, callback) => {
-    callback(null, usuario)
+    callback(null, usuario.username)
 });
 
 passport.deserializeUser(async (username, callback) => {
+    console.log('desde deserialize',username)
     const {users} = await connectMongo();
     const user = await users.findUser(username);
     callback(null, user);

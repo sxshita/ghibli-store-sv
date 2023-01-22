@@ -43,7 +43,7 @@ const postRegister = async (req, res) => {
         name: req.body.name, 
         address : req.body.address, 
         phone: req.body.phone,
-        avatar: req.file.filename ? req.file.filename : ""
+        avatar: req.file == undefined ? "empty" : req.file.filename
     };
     await users.save(userCreated);
     await sendMail();
