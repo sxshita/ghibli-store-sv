@@ -76,6 +76,9 @@ app.get('/info', routes.getInfo);
 // ** [API RANDOMS] ** //
 app.get('/api/randoms', routes.getApiRandoms);
 
+// ** [PROFILE] ** //
+app.get('/profile', routes.getProfile);
+
 // ** [WEBSOCKETS] ** //
 const httpServer = new HttpServer(app);
 const socketServer = new SocketServer(httpServer);

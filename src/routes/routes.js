@@ -6,6 +6,11 @@ import os from 'node:os';
 import getRandoms from '../apiRandoms.js';
 import sendMail from '../util/nodemailer/nodemailer.js';
 import bcrypt from 'bcrypt';
+import path from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const getIndex = async (req, res) => {
     const {products} = await connectMongo();
@@ -92,6 +97,15 @@ const getInfo = (_, res) => {
     });
 };
 
+const getProfile = async (req, res) => {
+    const { users } = await connectMongo();
+    let user;
+    if(req.session.passport?.user) {
+        user = await users.findUser(req.session.passport.user);
+    }
+    res.render('profile', { user })
+}
+
 export default {
     getIndex,
     getLogin,
@@ -104,4 +118,5 @@ export default {
     getApiRandoms,
     getFakerProducts,
     getInfo,
+    getProfile
 }

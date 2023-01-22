@@ -29,7 +29,6 @@ passport.serializeUser((usuario, callback) => {
 });
 
 passport.deserializeUser(async (username, callback) => {
-    console.log('desde deserialize',username)
     const {users} = await connectMongo();
     const user = await users.findUser(username);
     callback(null, user);
