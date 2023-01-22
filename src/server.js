@@ -15,6 +15,7 @@ import logger from "./loggers/Log4jsLogger.js";
 import loggerMiddleware from "./middlewares/routesLogger.middleware.js";
 import path from "path";
 import { fileURLToPath } from 'url';
+import upload from './util/multer/multer.js';
   
 const app = express();
 
@@ -23,7 +24,6 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
-app.use(express.json());
 app.use(express.static(path.join(__dirname + '/public')));
 app.use(session({
   store: MongoStore.create({ mongoUrl: "mongodb+srv://sasha:coder.sasha@cluster0.ezluz.mongodb.net/?retryWrites=true&w=majority" }),
@@ -39,7 +39,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(loggerMiddleware);
 
-console.log(__dirname)
 app.set('views',path.join(__dirname + '/public/views'));
 app.set('view engine','hbs');
 
@@ -63,7 +62,7 @@ app.post('/login', passport.authenticate('auth', {failureRedirect: '/login/failu
 // ** [REGISTER] ** //
 app.get('/register', routes.getRegister);
 app.get('/register/failure', routes.getRegisterFail)
-app.post('/register', passport.authenticate('register', {failureRedirect: '/register/failure', failureMessage: true} ), routes.postRegister);
+app.post('/register', upload.single('file'), passport.authenticate('register', {failureRedirect: '/register/failure', failureMessage: true} ), routes.postRegister);
 
 // ** [LOGOUT] ** //
 app.get('/logout', routes.getLogout)
@@ -126,7 +125,7 @@ app.get('*', (req, res, next) => {
 
 const PORT = process.env.PORT;
 
-httpServer.listen(PORT, () => {
+httpServer.listen(8080, () => {
   logger.info(`🚀 Server started at http://localhost:${PORT}`);
 });
 

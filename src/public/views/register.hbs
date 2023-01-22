@@ -15,7 +15,7 @@
             <div class="col" style="width: 60%;" >
                 <div class="card">
                     <div class="card-body">
-                        <form id="formRegister" action="/register" method="post">
+                        <form id="formRegister" action="/register" method="post" enctype="multipart/form-data"> 
                             <div class="container-sm">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Email:</label>
@@ -32,6 +32,9 @@
 
                                     <label for="phone" class="form-label">Teléfono:</label>
                                     <input type="number" class="form-control" id="phone" name="phone" placeholder="Ej: +54342955099" required>
+
+                                    <label for="file" class="form-label">Avatar: </label>
+                                    <input class="form-control" type="file" name="file" id="file">
                                 </div>
                                 {{#if error}}
                                     <p class="badge bg-danger text-wrap text-white">El usuario ya esta en uso, intenta con otro.</p>

@@ -25,7 +25,7 @@ passport.use('auth', new LocalStrategy (
 ));
 
 passport.serializeUser((usuario, callback) => {
-    callback(null, usuario.username)
+    callback(null, usuario)
 });
 
 passport.deserializeUser(async (username, callback) => {

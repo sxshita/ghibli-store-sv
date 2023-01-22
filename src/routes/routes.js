@@ -35,14 +35,15 @@ const getRegisterFail = (_, res) => {
 }
 
 const postRegister = async (req, res) => {
-    const { users } = connectMongo();
+    const { users } = await connectMongo();
     const passwordHashed = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     const userCreated = { 
         username : req.body.username, 
         password: passwordHashed, 
         name: req.body.name, 
         address : req.body.address, 
-        phone: req.body.phone 
+        phone: req.body.phone,
+        avatar: req.file.filename
     };
     await users.save(userCreated);
     await sendMail();
