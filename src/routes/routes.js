@@ -55,7 +55,7 @@ const postRegister = async (req, res) => {
         avatar: req.file == undefined ? "empty" : req.file.filename
     };
     await users.save(userCreated);
-    await sendMail();
+    await sendMail(userCreated);
     res.redirect('/login');
 }
 

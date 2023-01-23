@@ -1,6 +1,6 @@
 import { createTransport } from 'nodemailer';
 
-const TEST_MAIL = "florine.hessel54@ethereal.email"
+const TEST_MAIL = "florine.hessel54@ethereal.email";
 
 const transporter = createTransport({
     host: "smtp.ethereal.email",
@@ -15,21 +15,31 @@ const transporterGmail = createTransport({
     service: 'gmail',
     port: 587,
     auth: {
-        user: 'racagnisasha@gmail.com',
+        user: process.env.GMAIL_ADDRESS,
         pass: process.env.GMAIL_PASS
     }
  });
- 
 
-const mailOptions = {
-    from: 'Ghibli Store',
-    to: TEST_MAIL,
-    subject: 'Mail de prueba',
-    html: '<h1>Contenido de prueba</h1>'
-}
-
-async function sendMail() {
+async function sendMail(newUser) {
     try {
+        const html = 
+        `
+            <h1>Se detecto un nuevo registro!</h1>
+            <p>
+                Email: ${newUser.username}
+                Nombre completo: ${newUser.name}
+                Direccion: ${newUser.address}
+                Telefono: ${newUser.phone}
+            </p>
+        `
+
+        const mailOptions = {
+            from: 'Ghibli Store',
+            to: process.env.GMAIL_ADDRESS,
+            subject: 'Nuevo registro',
+            html
+        }
+
         const info = await transporterGmail.sendMail(mailOptions)
         console.log(info)
     }
