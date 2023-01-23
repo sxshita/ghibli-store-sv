@@ -26,8 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(express.static(path.join(__dirname + '/public')));
 app.use(session({
-  store: MongoStore.create({ mongoUrl: "mongodb+srv://sasha:coder.sasha@cluster0.ezluz.mongodb.net/?retryWrites=true&w=majority" }),
-  secret: 'sushi',
+  store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
+  secret: process.env.SESSION_SECRET,
   resave: true,
   cookie: {
     maxAge: 60000

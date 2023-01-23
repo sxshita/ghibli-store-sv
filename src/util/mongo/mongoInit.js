@@ -6,7 +6,7 @@ import { MongoClient } from 'mongodb';
 
 async function connectMongo() {
     try {
-      const mongo = new MongoClient("mongodb+srv://sasha:coder.sasha@cluster0.ezluz.mongodb.net/?retryWrites=true&w=majority");
+      const mongo = new MongoClient(process.env.DB_URL);
       const products = new MongoDbContainer(mongo, 'ecommerce', 'products');
       const messages = new MongoDbContainer(mongo, 'chat', 'messages');
       const users =  new MongoDbContainer(mongo, 'userList', 'users');
