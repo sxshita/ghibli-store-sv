@@ -132,7 +132,7 @@ app.get('*', (req, res, next) => {
   res.status(404).send("Sorry can't find that!")
 })
 
-const PORT = 8080;
+const PORT = process.env.PORT;
 
 httpServer.listen(PORT, () => {
   logger.info(`🚀 Server started at http://localhost:${PORT}`);
