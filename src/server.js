@@ -52,7 +52,7 @@ app.engine(
 
 // ** [INDEX] ** //
 
-app.get('/', checkAuth, routes.getIndex);
+app.get('/', checkAuth, routes.getHome);
 
 // ** [LOGIN] ** //
 app.get('/login', routes.getLogin);
@@ -78,6 +78,12 @@ app.get('/api/randoms', routes.getApiRandoms);
 
 // ** [PROFILE] ** //
 app.get('/profile', routes.getProfile);
+
+// ** [PRODUCTS] ** //
+app.get('/products', routes.getProducts);
+
+// ** [CHAT] ** //
+app.get('/chat', routes.getChat);
 
 // ** [WEBSOCKETS] ** //
 const httpServer = new HttpServer(app);
@@ -126,7 +132,7 @@ app.get('*', (req, res, next) => {
   res.status(404).send("Sorry can't find that!")
 })
 
-const PORT = process.env.PORT;
+const PORT = 8080;
 
 httpServer.listen(PORT, () => {
   logger.info(`🚀 Server started at http://localhost:${PORT}`);

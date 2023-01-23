@@ -41,34 +41,26 @@ const arrayMessagesSchema = new normalizr.schema.Entity("arrayMessages",{
     messages: [messageSchema]
 })
 
-const enviarMensaje = (e) => {
-    const id = document.getElementById('id').value;
-    const name = document.getElementById('name').value;
-    const lastname = document.getElementById('lastname').value;
-    const age = document.getElementById('age').value;
-    const alias = document.getElementById('alias').value;
-    const avatar = document.getElementById('avatar').value;
-
+const enviarMensaje = (user) => {
+    const id = user;
     const text = document.getElementById('text').value;
     const date = String(new Date().toDateString() + ' ' + new Date().toLocaleTimeString())
     
-    const author = { id, name, lastname, age, alias, avatar };
+    const author = { id };
     const message = { author, text, date}
     socket.emit('new_message', (message));
-    
     return false;
 }
 
 const crearEtiquetasMensaje = (message) => {
-    const { id, avatar } = message.author;
+    const { id } = message.author;
     const { text, date } = message;
     
     return `
     <div>
-        <strong style='color:blue'>${id}</strong>
-        <p style='color:brown'>${date}</p>
-        <i style='color:green'>${text}</i>
-        <img style='width: 5%' src=${avatar} alt=${id}/>
+        <strong style="color: #EBBAB9">${id}</strong>
+        <p class="text-success">${date}</p>
+        <i>${text}</i>
     </div>
     `;
 }

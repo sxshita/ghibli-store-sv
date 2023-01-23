@@ -12,10 +12,14 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const getIndex = async (req, res) => {
-    const {products} = await connectMongo();
-    const prods = await products.getAll();
-    res.render('table', { prods, user: req.session.passport.user });
+const getProducts = async (req, res) => {
+    if(req.session.passport?.user) {
+        const {products} = await connectMongo();
+        const prods = await products.getAll();
+        res.render('table', { prods, user: req.session.passport.user });
+    } else {
+        res.redirect('/login');
+    }  
 };
 
 const getLogin = (_, res) => {
@@ -102,12 +106,31 @@ const getProfile = async (req, res) => {
     let user;
     if(req.session.passport?.user) {
         user = await users.findUser(req.session.passport.user);
+        res.render('profile', { user });
+    } else {
+        res.redirect('/login');
     }
-    res.render('profile', { user })
+    
+}
+
+const getHome = async (req, res) => {
+    if(req.session.passport?.user) {
+        res.render('home', {user: req.session.passport.user});
+    } else {
+        res.redirect('/login');
+    } 
+}
+
+const getChat = async (req, res) => {
+    if(req.session.passport?.user) {
+        res.render('chat', {user: req.session.passport.user});
+    } else {
+        res.redirect('/login');
+    } 
 }
 
 export default {
-    getIndex,
+    getProducts,
     getLogin,
     getLoginFail,
     postLogin,
@@ -118,5 +141,7 @@ export default {
     getApiRandoms,
     getFakerProducts,
     getInfo,
-    getProfile
+    getProfile,
+    getHome,
+    getChat
 }
