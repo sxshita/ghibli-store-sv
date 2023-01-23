@@ -115,7 +115,8 @@ const getProfile = async (req, res) => {
 
 const getHome = async (req, res) => {
     if(req.session.passport?.user) {
-        res.render('home', {user: req.session.passport.user});
+        const user = req.session.passport.user.split('@')[0];
+        res.render('home', {user});
     } else {
         res.redirect('/login');
     } 
