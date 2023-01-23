@@ -8,6 +8,7 @@ import sendMail from '../util/nodemailer/nodemailer.js';
 import bcrypt from 'bcrypt';
 import path from "path";
 import { fileURLToPath } from 'url';
+import sendSMS from '../util/twilio/twilio.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,7 +32,7 @@ const getLoginFail = (_, res) => {
     res.render('login', {error: true});
 };
 
-const postLogin = (_, res) => {
+const postLogin = async (_, res) => {
     res.redirect('/')
 };
 
