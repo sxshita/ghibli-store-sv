@@ -30,7 +30,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true,
   cookie: {
-    maxAge: 60000
+    maxAge: 6000000
   },
   saveUninitialized: true,
   rolling: true
@@ -67,23 +67,23 @@ app.post('/register', upload.single('file'), passport.authenticate('register', {
 // ** [LOGOUT] ** //
 app.get('/logout', routes.getLogout)
 
-// ** [FAKER PRODUCTS] ** //
-app.get('/api/productos-test', routes.getFakerProducts);
-
 // ** [INFO ARGUMENTOS] ** //
 app.get('/info', routes.getInfo);
-
-// ** [API RANDOMS] ** //
-app.get('/api/randoms', routes.getApiRandoms);
 
 // ** [PROFILE] ** //
 app.get('/profile', routes.getProfile);
 
-// ** [PRODUCTS] ** //
+// ** [PRODUCTS ADMIN] ** //
+app.get('/admin/products', routes.getProductsAdmin);
+
+// ** [PRODUCTS ADMIN] ** //
 app.get('/products', routes.getProducts);
 
 // ** [CHAT] ** //
 app.get('/chat', routes.getChat);
+
+// ** [CART] ** //
+app.get('/cart', routes.getCart);
 
 // ** [WEBSOCKETS] ** //
 const httpServer = new HttpServer(app);
@@ -119,7 +119,6 @@ socketServer.on('connection', async (socket) => {
       console.log(`error: ${err}`);
      }
   });
-
 });
 
 app.use((error, req, res, next) => {

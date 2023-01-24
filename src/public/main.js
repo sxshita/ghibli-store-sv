@@ -9,7 +9,6 @@ const enviarProducto = (e) => {
     const price = document.getElementById("price").value;
     const thumbnail = document.getElementById("thumbnail").value;
     const product = { title: title, price: price, thumbnail: thumbnail };
-    console.log(product)
     socket.emit('new_product', product);
     return false;
 };
@@ -57,7 +56,7 @@ const crearEtiquetasMensaje = (message) => {
     const { text, date } = message;
     
     return `
-    <div>
+    <div class="mb-4">
         <strong style="color: #EBBAB9">${id}</strong>
         <p class="text-success">${date}</p>
         <i>${text}</i>

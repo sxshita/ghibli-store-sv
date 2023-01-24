@@ -1,9 +1,7 @@
 import { fork } from 'child_process';
 import connectMongo from '../util/mongo/mongoInit.js';
-import uploadProducts from "../util/faker/uploadProducts.js";
 import logger from "../loggers/Log4jsLogger.js";
 import os from 'node:os';
-import getRandoms from '../apiRandoms.js';
 import sendMail from '../util/nodemailer/nodemailer.js';
 import bcrypt from 'bcrypt';
 import path from "path";
@@ -13,15 +11,32 @@ import sendSMS from '../util/twilio/twilio.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const getProducts = async (req, res) => {
+const getProductsAdmin = async (req, res) => {
     if(req.session.passport?.user) {
-        const {products} = await connectMongo();
-        const prods = await products.getAll();
-        res.render('table', { prods, user: req.session.passport.user });
+        const {users} = await connectMongo();
+        const user = users.findUser(req.session.passport?.user);
+        if(user.admin){
+            const {products} = await connectMongo();
+            const prods = await products.getAll();
+            res.render('table', { prods, user: req.session.passport.user });
+        } else {
+            res.redirect('/');
+        }
     } else {
         res.redirect('/login');
     }  
 };
+
+const getProducts = async (req, res) => {
+    if(req.session.passport?.user) {
+        const {products} = await connectMongo();
+        const prods = await products.getAll();
+        console.log(prods)
+        res.render('products', {prods});
+    } else {
+        res.redirect('/login');
+    }  
+}
 
 const getLogin = (_, res) => {
     logger.info();
@@ -70,28 +85,6 @@ const getLogout = (req, res) => {
     }; 
 };
 
-const getApiRandoms = (req, res) => {
-    var cant = 1000000;
-    if(req.query.cant){
-      cant = req.query.cant
-    };
-
-    getRandoms(cant);
-
-    // const forked = fork('./apiRandoms.js');
-    // forked.send({start: true, cant});
-    // forked.on('message', (msg) => {
-    //     if(msg){
-    //         res.send(msg);
-    //     }
-    // });
-}
-
-const getFakerProducts = async (_, res) => {
-    const prods = await uploadProducts();
-    res.render('table-test', { prods });
-};
-
 const getInfo = (_, res) => {
     const forked = fork('../getInfo.js');
     forked.send({start: true, cant});
@@ -116,7 +109,9 @@ const getProfile = async (req, res) => {
 
 const getHome = async (req, res) => {
     if(req.session.passport?.user) {
-        const user = req.session.passport.user.split('@')[0];
+        const {users} = await connectMongo();
+        const user = users.findUser(req.session.passport?.user);
+        user.nickname = req.session.passport.user.split('@')[0];
         res.render('home', {user});
     } else {
         res.redirect('/login');
@@ -131,7 +126,12 @@ const getChat = async (req, res) => {
     } 
 }
 
+const getCart = async (req, res) => {
+    res.render('cart');
+}
+
 export default {
+    getProductsAdmin,
     getProducts,
     getLogin,
     getLoginFail,
@@ -140,10 +140,9 @@ export default {
     getRegisterFail,
     postRegister,
     getLogout,
-    getApiRandoms,
-    getFakerProducts,
     getInfo,
     getProfile,
     getHome,
-    getChat
+    getChat,
+    getCart
 }
