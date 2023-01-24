@@ -15,7 +15,7 @@ async function connectMongo() {
       return { products, cart, messages, users};
     }
     catch(err) {
-        console.log(`ERROR: ${err}`);
+      console.log(`ERROR: ${err}`);
     }
 }
 

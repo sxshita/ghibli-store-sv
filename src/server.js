@@ -5,17 +5,16 @@ import { engine } from "express-handlebars";
 import { Server as HttpServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import session from 'express-session';
-import passport from './util/passport/passport.js';
 import MongoStore from 'connect-mongo';
 import connectMongo from './util/mongo/mongoInit.js';
-import routes from "./routes/routes.js";
-import checkAuth from "./middlewares/auth.middleware.js"; 
 import compression from "compression";
 import logger from "./loggers/Log4jsLogger.js";
 import loggerMiddleware from "./middlewares/routesLogger.middleware.js";
 import path from "path";
 import { fileURLToPath } from 'url';
-import upload from './util/multer/multer.js';
+import userRouter from './routes/userRoute.js';
+import productRouter from './routes/productRoute.js';
+import cartRouter from './routes/cartRoute.js';
   
 const app = express();
 
@@ -24,7 +23,7 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
-app.use(express.static(path.join(__dirname + '/public')));
+app.use(express.static(path.join(__dirname + '/../public')));
 app.use(session({
   store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   secret: process.env.SESSION_SECRET,
@@ -35,11 +34,9 @@ app.use(session({
   saveUninitialized: true,
   rolling: true
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(loggerMiddleware);
 
-app.set('views',path.join(__dirname + '/public/views'));
+app.set('views',path.join(__dirname + '/views'));
 app.set('view engine','hbs');
 
 app.engine(
@@ -50,40 +47,9 @@ app.engine(
   })
 );
 
-// ** [INDEX] ** //
-
-app.get('/', checkAuth, routes.getHome);
-
-// ** [LOGIN] ** //
-app.get('/login', routes.getLogin);
-app.get('/login/failure', routes.getLoginFail);
-app.post('/login', passport.authenticate('auth', {failureRedirect: '/login/failure'}), routes.postLogin);
-
-// ** [REGISTER] ** //
-app.get('/register', routes.getRegister);
-app.get('/register/failure', routes.getRegisterFail)
-app.post('/register', upload.single('file'), passport.authenticate('register', {failureRedirect: '/register/failure', failureMessage: true} ), routes.postRegister);
-
-// ** [LOGOUT] ** //
-app.get('/logout', routes.getLogout)
-
-// ** [INFO ARGUMENTOS] ** //
-app.get('/info', routes.getInfo);
-
-// ** [PROFILE] ** //
-app.get('/profile', routes.getProfile);
-
-// ** [PRODUCTS ADMIN] ** //
-app.get('/admin/products', routes.getProductsAdmin);
-
-// ** [PRODUCTS ADMIN] ** //
-app.get('/products', routes.getProducts);
-
-// ** [CHAT] ** //
-app.get('/chat', routes.getChat);
-
-// ** [CART] ** //
-app.get('/cart', routes.getCart);
+app.use('/', userRouter);
+app.use('/api/products', productRouter);
+app.use('/api/cart', cartRouter)
 
 // ** [WEBSOCKETS] ** //
 const httpServer = new HttpServer(app);
@@ -91,7 +57,7 @@ const socketServer = new SocketServer(httpServer);
 
 socketServer.on('connection', async (socket) => {
   const {products, messages} = await connectMongo();
-  const myMessages = await messages.getById(333);
+  const myMessages = await messages.getById(process.env.COD_DEPLOYMENT);
  
   socket.emit('products', await products.getAll());
   if(myMessages) socket.emit('messages', myMessages.messages);
@@ -110,7 +76,7 @@ socketServer.on('connection', async (socket) => {
 
   socket.on('new_message', async (message) => {
     try {
-      const arrayMessagesId = 333;
+      const arrayMessagesId = process.env.COD_DEPLOYMENT;
       await messages.saveMessage(arrayMessagesId, message);
       let arrayMessages = await messages.getById(arrayMessagesId);
       socketServer.sockets.emit('messages', arrayMessages.messages);
@@ -136,6 +102,5 @@ const PORT = process.env.PORT;
 httpServer.listen(PORT, () => {
   logger.info(`🚀 Server started at http://localhost:${PORT}`);
 });
-
 
 httpServer.on('error', (err) => logger.error(err));
