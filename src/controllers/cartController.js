@@ -80,7 +80,7 @@ const checkout = async (req, res) => {
                 `;
             });
 
-            const message = `<h1>Nuevo pedido de ${req.session.passport.user}</h1> <br>` + '<ul style="list-style-type: circle;">' + productListHTML + '</ul>' + '<br>' + `<p>Total: ${total}</p>`;
+            const message = `<h1>Nuevo pedido de ${req.session.passport.user}</h1> <br>` + '<ul style="list-style-type: circle;">' + productListHTML + '</ul>' + '<br>' + `<p>Total: $${total}</p>`;
 
             nodemailer.sendNewOrder(message);
             sendSMS(message);
