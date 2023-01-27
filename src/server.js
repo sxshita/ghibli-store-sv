@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config()
 import express from 'express';
+import cluster from 'cluster';
 import { engine } from "express-handlebars";
 import { Server as HttpServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
@@ -15,6 +16,10 @@ import { fileURLToPath } from 'url';
 import userRouter from './routes/userRoute.js';
 import productRouter from './routes/productRoute.js';
 import cartRouter from './routes/cartRoute.js';
+import * as os from 'os';
+
+const numCPUs = os.cpus().length;
+const isMaster = cluster.isPrimary;
   
 const app = express();
 
@@ -100,8 +105,20 @@ app.get('*', (req, res, next) => {
 
 const PORT = process.env.PORT;
 
-httpServer.listen(PORT, () => {
-  logger.info(`🚀 Server started at http://localhost:${PORT}`);
-});
+if(process.env.MOD === 'CLUSTER' && isMaster) {
 
-httpServer.on('error', (err) => logger.error(err));
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  };
+
+  cluster.on('exit', (worker) => {
+    console.log(`Worker with PID ${worker.process.pid} exited`);
+  });
+} else {
+  httpServer.listen(PORT, () => {
+    logger.info(`🚀 Server started at http://localhost:${PORT}`);
+  });
+
+  httpServer.on('error', (err) => logger.error(err));
+}
+

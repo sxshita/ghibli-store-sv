@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import twilio from 'twilio';
-import logger from '../../loggers/Log4jsLogger';
+import logger from '../../loggers/Log4jsLogger.js';
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
