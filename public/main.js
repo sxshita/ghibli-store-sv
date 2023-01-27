@@ -1,4 +1,6 @@
-const socket = io();
+const socket = io("https://ghibli-store-sv-production.up.railway.app/", {
+    transports: [ "websocket" ]
+});
 
 const logout = () => {
     window.location.replace("/logout");
