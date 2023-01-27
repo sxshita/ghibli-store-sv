@@ -115,8 +115,8 @@ if(process.env.MOD === 'CLUSTER' && isMaster) {
     console.log(`Worker with PID ${worker.process.pid} exited`);
   });
 } else {
-  httpServer.listen(PORT, () => {
-    logger.info(`🚀 Server started at http://localhost:${PORT}`);
+  httpServer.listen(process.env.PORT, () => {
+    logger.info(`🚀 Server started at http://localhost:${process.env.PORT}`);
   });
 
   httpServer.on('error', (err) => logger.error(err));
