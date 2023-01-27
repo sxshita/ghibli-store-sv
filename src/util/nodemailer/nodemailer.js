@@ -20,7 +20,7 @@ const transporterGmail = createTransport({
     }
  });
 
-async function sendMail(newUser) {
+async function sendNewUserMail(newUser) {
     try {
         const html = 
         `
@@ -48,4 +48,22 @@ async function sendMail(newUser) {
     }
 }
 
-export default sendMail;
+async function sendNewOrder(message) {
+    try {
+        const html = message;
+
+        const mailOptions = {
+            from: 'Ghibli Store',
+            to: process.env.GMAIL_ADDRESS,
+            subject: 'Nueva orden en la tienda',
+            html
+        }
+
+        const info = await transporterGmail.sendMail(mailOptions)
+        console.log(info)
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+export default { sendNewUserMail, sendNewOrder };

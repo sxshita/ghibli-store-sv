@@ -72,3 +72,52 @@ const agregarMensajes = (messages) => {
 }
 
 socket.on('messages', (messages) => agregarMensajes(messages));
+
+const agregarProducto = async (prodId, cartId) => {
+    try {     
+        const response = await fetch(`/api/cart/${cartId}/products`, {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({prod_id: prodId})
+        });
+        console.log('Completed!', response);
+    } catch(err) {
+        console.error(`Error: ${err}`);
+    }
+  
+}
+
+const eliminarProducto = async (prodId, cartId) => {
+    try {     
+        const response = await fetch(`/api/cart/${cartId}/products/${prodId}`, {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Completed!', response);
+    } catch(err) {
+        console.error(`Error: ${err}`);
+    }
+  
+}
+
+const hacerPedido = async (cartId) => {
+    try {     
+        const response = await fetch(`/api/cart/${cartId}/checkout`, {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Completed!', response);
+    } catch(err) {
+        console.error(`Error: ${err}`);
+    }
+  
+}

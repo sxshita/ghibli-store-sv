@@ -14,7 +14,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <a class="nav-link color-pink" href="/cart">
-                            <a role="button" class="btn btn-outline-primary custom-btn" href="/api/cart" style="margin-top: 10px;">Ir al carrito</a>
+                            <a role="button" class="btn btn-outline-primary custom-btn" href="/api/products" style="margin-top: 10px;">Seguir comprando</a>
                         </a>
                         <a class="nav-link color-pink" href="/">
                             <a role="button" class="btn btn-outline-primary custom-btn" href="/" style="margin-top: 10px;">Volver al inicio </a>
@@ -28,22 +28,28 @@
     <div class="container text-center col-6 mx-auto">
         <div class="card shadow-lg" style="border-color: transparent; margin-top: 40px; width: 900px; height: 700px; background-color: rgba(255, 255, 255, 0.952)">
             <div class="card-header">
-                <h2>Comprar productos</h2>
+                <h2>Carrito</h2>
+                {{#if data.prods}}
+                <button type="button" class="btn btn-outline-primary custom-btn" style="margin-top: 10px;" onclick="return hacerPedido('{{data.cartId}}')">🎀 Hacer pedido</button> 
+                {{/if}}
             </div>
-            <div class="card-body overflow-auto">
+            <div class="card-body overflow-auto text-center">
                 <div id="products" class="row g-2">
                     {{#if data.prods}}
                         {{#each data.prods}}
                             <div class="col-4 mb-4">
                                 <img src={{this.thumbnail}} alt={{this.title}} style="width: 150px; height:150px">
                                 <p class="">{{this.title}}</p>
-                                <button type="button" class="btn btn-primary btn-sm" onclick="return agregarProducto('{{this._id}}','{{@root.data.cartId}}')">🛒 Agregar</button>
-                            </div>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="return eliminarProducto('{{this._id}}','{{@root.data.cartId}}')">❌ Eliminar</button>
+                            </div>            
                         {{/each}}
                     {{else}}
-                    <p>No hay productos disponibles.</p>
+                    <div class="col-12 mb-4">
+                        <p>Tu carrito esta vacio</p>
+                        <a role="button" class="btn btn-lg btn-outline-primary custom-btn" href="/api/products" style="margin-top: 10px;">🍓 Agregar productos</a>
+                    </div> 
                     {{/if}}
-                </div>  
+                </div> 
             </div>
         </div>
     </div>

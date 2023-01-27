@@ -1,3 +1,5 @@
+import logger from './loggers/Log4jsLogger.js';
+
 class MongoDbContainer {
     constructor(mongo, db, coll){
         this.db = db;
@@ -8,7 +10,7 @@ class MongoDbContainer {
     async save(object) {
         try{
             const res = await this.mongo.db(this.db).collection(this.coll).insertOne(object);
-            console.log(res)
+            logger.info(res)
             return res;
         }
         catch(err) {
@@ -29,11 +31,15 @@ class MongoDbContainer {
     async getById(id) {
         try {
             const allDocumentsFromCollection = await this.getAll();
-            const document = allDocumentsFromCollection.find(d => d.id === id);
+            const document = allDocumentsFromCollection.find((d) => {
+                const dId = JSON.stringify(d._id).split('"')[1];
+                return dId === id;
+            });
+
             return document;
         }
-        catch {
-
+        catch (e){
+            logger.error(e);
         }
     }
 
@@ -61,9 +67,10 @@ class MongoDbContainer {
 
     async updateById(id, object) {
         try{
-            const objectUpdate = await this.mongo.db(this.db).collection(this.coll).updateOne({id: id}, {
+            const objectUpdate = await this.mongo.db(this.db).collection(this.coll).updateOne({_id: id}, {
                 $set: object
             });
+            logger.info("updated:", objectUpdate);
             return objectUpdate;
         }
         catch(err) {
@@ -89,6 +96,21 @@ class MongoDbContainer {
         }
         catch(err){
             console.log(`ERROR: ${err}`);
+        }
+    }
+
+    async createCart() {
+        try {
+            const res = await this.mongo.db(this.db).collection(this.coll).insertOne({
+                timestamp: Date.now(),
+                products: []
+            });
+
+            logger.info(res)
+            return res;
+        }
+        catch (e) {
+            
         }
     }
 
