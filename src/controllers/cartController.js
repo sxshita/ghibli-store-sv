@@ -6,17 +6,22 @@ import sendSMS from '../util/twilio/twilio.js';
 const getCart = async (req, res) => {
     const { carts, users, products } = await connectMongo();
     const user = await users.findUser(req.session.passport.user);
-    const cart = await carts.getById(user.cart_id);
-    const allProds = await products.getAll();
 
-    const prods = cart.products.map((p) => {
-        const prod = allProds.find(aP => JSON.stringify(aP._id).split('"')[1] === p);
-        return prod;
-    })
+    let data = {};
 
-    const data = {
-        prods,
-        cartId: JSON.stringify(cart._id).split('"')[1]
+    if(user.cart_id !== -1 && user.cart_id !== undefined & user.cart_id !== null) {
+        const allProds = await products.getAll();
+        const cart = await carts.getById(user.cart_id);
+
+        const prods = cart.products.map((p) => {
+            const prod = allProds.find(aP => JSON.stringify(aP._id).split('"')[1] === p);
+            return prod;
+        })
+    
+        data = {
+            prods,
+            cartId: JSON.stringify(cart._id).split('"')[1]
+        }
     }
 
     res.render('cart', { data });
@@ -61,7 +66,7 @@ const checkout = async (req, res) => {
         const { cartId } = req.params;
     
         if(cartId) {  
-            const { carts, products } = await connectMongo();
+            const { carts, products, users } = await connectMongo();
             const cart = await carts.getById(cartId);
             const allProds = await products.getAll();
             let total = 0;
@@ -84,6 +89,11 @@ const checkout = async (req, res) => {
 
             nodemailer.sendNewOrder(message);
             sendSMS(message);
+
+            const user = users.findUser(req.session.passport.user);
+            user.cart_id = -1;
+            const userId = JSON.stringify(user._id).split('"')[1];
+            user.updateById(userId, user);
             cart.products = [];
             await carts.updateById(cart._id, cart);
         } 
@@ -103,6 +113,7 @@ async function createCart(username) {
     
         const user = await users.findUser(username);
         user.cart_id = cartId;
+        logger.info(user)
     
         await users.updateById(user._id, user);
         logger.info('cart created');

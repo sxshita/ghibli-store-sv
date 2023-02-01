@@ -1,7 +1,7 @@
 import connectMongo from '../util/mongo/mongoInit.js';
 import bcrypt from 'bcrypt';
 import logger from "../loggers/Log4jsLogger.js";
-import sendMail from '../util/nodemailer/nodemailer.js';
+import nodemailer from '../util/nodemailer/nodemailer.js';
 
 const getLogin = (_, res) => {
     logger.info();
@@ -39,7 +39,7 @@ const postRegister = async (req, res) => {
 
     const newUser = await users.save(userCreated);
 
-    await sendMail(userCreated);
+    await nodemailer.sendNewUserMail(userCreated);
 
     res.redirect('/login');
 };

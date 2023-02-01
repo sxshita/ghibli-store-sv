@@ -67,8 +67,9 @@ class MongoDbContainer {
 
     async updateById(id, object) {
         try{
-            const objectId = await this.getById(id);
-            const objectUpdate = await this.mongo.db(this.db).collection(this.coll).updateOne({_id: objectId._id}, {
+            const objectId = (typeof id !== 'object') ? await this.getById(id) : null;
+            
+            const objectUpdate = await this.mongo.db(this.db).collection(this.coll).updateOne({"_id": objectId ? objectId._id : id}, {
                 $set: object
             });
             logger.info("updated:", objectUpdate);
