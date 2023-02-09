@@ -2,6 +2,11 @@ import logger from '../loggers/Log4jsLogger.js';
 import connectMongo from '../util/mongo/mongoInit.js';
 import nodemailer from '../util/nodemailer/nodemailer.js';
 import sendSMS from '../util/twilio/twilio.js';
+import { UserService } from '../services/userService.js';
+import { CartService } from '../services/cartService.js';
+
+const carritoService = CartService.getInstance();
+const userService = UserService.getInstance();
 
 const getCart = async (req, res) => {
     const { carts, users, products } = await connectMongo();
