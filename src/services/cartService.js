@@ -35,6 +35,15 @@ export class CartService extends BaseDao {
             return null;
         }
     }
+
+    async getById() {
+        try {
+            return await CartsModel.find();
+        } catch (error) {
+            this.logger.error(error);
+            return null;
+        }
+    }
     
     async deleteById(id) {
         try {

@@ -4,19 +4,23 @@ import nodemailer from '../util/nodemailer/nodemailer.js';
 import sendSMS from '../util/twilio/twilio.js';
 import { UserService } from '../services/userService.js';
 import { CartService } from '../services/cartService.js';
+import { ProductService } from '../services/productService.js';
 
-const carritoService = CartService.getInstance();
+const cartService = CartService.getInstance();
 const userService = UserService.getInstance();
+const productService = ProductService.getInstance();
 
 const getCart = async (req, res) => {
-    const { carts, users, products } = await connectMongo();
-    const user = await users.findUser(req.session.passport.user);
+    const { carts, products } = await connectMongo();
+    const username = req.session.passport.user;
+
+    const user = await userService.findUserByUsername(username);
 
     let data = {};
 
     if(user.cart_id !== -1 && user.cart_id !== undefined & user.cart_id !== null) {
-        const allProds = await products.getAll();
-        const cart = await carts.getById(user.cart_id);
+        const allProds = await productService.getAll();
+        const cart = await cartService.getById(user.cart_id);
 
         const prods = cart.products.map((p) => {
             const prod = allProds.find(aP => JSON.stringify(aP._id).split('"')[1] === p);

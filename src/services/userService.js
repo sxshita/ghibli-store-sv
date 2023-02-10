@@ -46,4 +46,15 @@ export class UserService {
             return null;
         }
     }
+
+    async findUserByUsername(username) {
+        try {
+            return await UsersModel.findOne({ 
+                [this.USERNAME_FIELD] : username
+            });
+        } catch (error) {
+            logger.error(error);
+            return null;
+        }
+    }
 }
