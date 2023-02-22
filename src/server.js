@@ -48,8 +48,11 @@ app.set('view engine','hbs');
 app.engine(
   'hbs',
   engine({
-      extname: '.hbs',
-      defaultLayout: 'index.hbs',
+    extname: '.hbs',
+    defaultLayout: 'index.hbs',
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true, // disables the prototype check
+    }
   })
 );
 

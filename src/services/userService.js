@@ -1,6 +1,6 @@
-import "../configs/db.config.js";
-import { UsersModel } from "../models/usersModel.js";
-import logger from "../utils/loggers/Log4jsLogger.js";
+import "../configs/dbConfig.js";
+import { UsersModel } from "../models/userModel.js";
+import logger from "../loggers/Log4jsLogger.js";
 
 export class UserService {
 
@@ -51,7 +51,33 @@ export class UserService {
         try {
             return await UsersModel.findOne({ 
                 [this.USERNAME_FIELD] : username
+            }).exec();
+        } catch (error) {
+            logger.error(error);
+            return null;
+        }
+    }
+
+    async updateById(pId, newUser) {
+        try {
+            let user = await UsersModel.findById(pId);
+            user = newUser;
+            user.save();
+            return user;
+        } catch (error) {
+            logger.error(error);
+            return null;
+        }
+    }
+
+    async deleteCart(username) {
+        try {
+            const user = await UsersModel.findOne({
+                [this.USERNAME_FIELD] : username
             });
+            user.cart_id = -1;
+            user.save();
+            return true;
         } catch (error) {
             logger.error(error);
             return null;

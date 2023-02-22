@@ -1,10 +1,11 @@
-import connectMongo from '../util/mongo/mongoInit.js';
 import bcrypt from 'bcrypt';
 import logger from "../loggers/Log4jsLogger.js";
 import nodemailer from '../util/nodemailer/nodemailer.js';
+import { UserService } from '../services/userService.js';
+
+const userService = UserService.getInstance();
 
 const getLogin = (_, res) => {
-    logger.info();
     res.render('login');
 };
 
@@ -25,7 +26,6 @@ const getRegisterFail = (_, res) => {
 }
 
 const postRegister = async (req, res) => {
-    const { users } = await connectMongo();
     const passwordHashed = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
 
     const userCreated = { 
@@ -37,7 +37,7 @@ const postRegister = async (req, res) => {
         avatar: req.file == undefined ? "empty" : req.file.filename
     };
 
-    const newUser = await users.save(userCreated);
+    await userService.createUser(userCreated);
 
     await nodemailer.sendNewUserMail(userCreated);
 
@@ -58,11 +58,11 @@ const getLogout = (req, res) => {
 };
 
 const getProfile = async (req, res) => {
-    const { users } = await connectMongo();
+    const username = req.session.passport?.user;
     let user;
 
-    if(req.session.passport?.user) {
-        user = await users.findUser(req.session.passport.user);
+    if(username) {
+        user = await userService.findUserByUsername(username);
 
         res.render('profile', { user });
     } else {
@@ -72,21 +72,24 @@ const getProfile = async (req, res) => {
 }
 
 const getHome = async (req, res) => {
-    if(req.session.passport?.user) {
-        const {users} = await connectMongo();
-        const user = users.findUser(req.session.passport?.user);
+    const username = req.session.passport?.user;
 
-        user.nickname = req.session.passport.user.split('@')[0];
+    if(username) {
+        const user = userService.findUserByUsername(username);
 
-        res.render('home', {user});
+        user.nickname = username.split('@')[0];
+
+        res.render('home', { user });
     } else {
         res.redirect('/login');
     } 
 }
 
 const getChat = async (req, res) => {
-    if(req.session.passport?.user) {
-        res.render('chat', {user: req.session.passport.user});
+    const user = req.session.passport?.user;
+
+    if(user) {
+        res.render('chat', { user });
     } else {
         res.redirect('/login');
     } 

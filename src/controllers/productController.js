@@ -1,16 +1,14 @@
 import logger from '../loggers/Log4jsLogger.js';
-import connectMongo from '../util/mongo/mongoInit.js';
+import { UserService } from '../services/userService.js';
+import { ProductService } from '../services/productService.js';
+
+const userService = UserService.getInstance();
+const productService = ProductService.getInstance();
 
 const getProducts = async (req, res) => {
     if(req.session.passport?.user) {
-        const { products, users } = await connectMongo();
-        const prods = await products.getAll();
-        const user = await users.findUser(req.session.passport?.user);
-       
-        if(user.cart_id === undefined || user.cart_id === null) {
-            user.cart_id = '-1';
-            logger.info(user.cart_id);
-        }
+        const prods = await productService.getAll();
+        const user = await userService.findUserByUsername(req.session.passport?.user);
 
         const data = {
             prods,
@@ -24,15 +22,15 @@ const getProducts = async (req, res) => {
 }
 
 const getProductsAdmin = async (req, res) => {
-    if(req.session.passport?.user) {
-        const {users} = await connectMongo();
-        const user = users.findUser(req.session.passport?.user);
+    const username = req.session.passport?.user;
+
+    if(username) {
+        const user = userService.findUserByUsername(username);
 
         if(user.admin){
-            const {products} = await connectMongo();
-            const prods = await products.getAll();
+            const prods = await productService.getAll();
 
-            res.render('table', { prods, user: req.session.passport.user });
+            res.render('table', { prods, user: username });
         } else {
             res.redirect('/');
         }
