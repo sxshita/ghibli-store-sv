@@ -1,4 +1,5 @@
 import { CartsModel } from '../models/cartModel.js';
+import { ProductsModel } from '../models/productModel.js';
 import { BaseDao } from "./BaseDao.js";
 
 export class CartService extends BaseDao {
@@ -35,6 +36,15 @@ export class CartService extends BaseDao {
             return null;
         }
     }
+
+    async getById(id) {
+        try {
+            return await CartsModel.findById(id);
+        } catch (error) {
+            this.logger.error(error);
+            return null;
+        }
+    }
     
     async deleteById(id) {
         try {
@@ -45,10 +55,14 @@ export class CartService extends BaseDao {
         }
     }
 
-    async saveProductToCart(id, obj) {
+    async saveProductToCart(id, productId) {
         try {
-            const cart = await CartsModel.findById(id)
-            cart.products.push(obj.productId);
+            const cart = await CartsModel.findById(id);
+
+            const products = cart.products !== null ? cart.products : [];
+            products.push(productId);
+
+            cart.products = products;
             cart.save();
             return true;
         } catch (error) {
@@ -71,7 +85,7 @@ export class CartService extends BaseDao {
     
     async getAllProductsFromCart(id) {
         try {
-            return await CartsModel.findById(id).populate('products').select({products: 1, _id:0});
+            return await CartsModel.findById(id).populate({path: 'products', model: ProductsModel}).select({products: 1, _id:0});
         } catch (error) {
             this.logger.error(error);
             return null;

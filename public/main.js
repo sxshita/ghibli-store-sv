@@ -77,6 +77,9 @@ socket.on('messages', (messages) => agregarMensajes(messages));
 
 const agregarProducto = async (prodId, cartId) => {
     try {     
+        if(!cartId){
+            cartId = -1;
+        }
         const response = await fetch(`/api/cart/${cartId}/products`, {
             method: 'post',
             headers: {

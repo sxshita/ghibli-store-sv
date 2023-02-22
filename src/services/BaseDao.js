@@ -1,5 +1,5 @@
-import logger from "../utils/loggers/Log4jsLogger.js";
-import "../configs/db.config.js";
+import logger from "../loggers/Log4jsLogger.js";
+import "../configs/dbConfig.js";
 
 export class BaseDao {
 

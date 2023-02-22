@@ -1,4 +1,4 @@
-import { ProductsModel } from "../models/productsModel.js";
+import { ProductsModel } from "../models/productModel.js";
 import {BaseDao} from "./BaseDao.js";
 
 export class ProductService extends BaseDao{
@@ -35,11 +35,9 @@ export class ProductService extends BaseDao{
         }
     }
     
-    async getProductById(objectId) {
+    async getProductById(id) {
         try {
-            const product = await ProductsModel.findOne({
-                [this.ID_FIELD] : objectId
-            })
+            const product = await ProductsModel.findById(id)
             return product;
         } catch (error) {
             this.logger.error(error);

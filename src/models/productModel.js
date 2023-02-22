@@ -36,4 +36,5 @@ const Schema = new mongoose.Schema({
     }
 })
 
-export const ProductsModel = mongoose.model("products", Schema);
+const conn = mongoose.createConnection("mongodb+srv://sasha:coder.sasha@cluster0.ezluz.mongodb.net/ecommerce?retryWrites=true&w=majority");
+export const ProductsModel = conn.model("products", Schema);
